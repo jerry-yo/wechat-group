@@ -11,6 +11,8 @@ module.exports = class Wechat {
 		this.opts = Object.assign({}, opts)
 		this.appID = opts.appID
 		this.appSecret = opts.appSecret
+		this.getAccessToken = opts.getAccessToken
+		this.saveAccessToken = opts.saveAccessToken
 
 		this.fetchAccessToken()
 	}
@@ -29,26 +31,28 @@ module.exports = class Wechat {
 	}
 
 	async fetchAccessToken () {
-		let data
-		if (this.getAccessToken) {
-			data = await this.getAccessToken()
-		}
-		
+
+		// 获取保存的AccessToken
+		let data = await this.getAccessToken()
+
+		// 验证AccessToken是否过期
 		if (!this.isValidToken(data)) {
 			data = await this.updateAccessToken()
 		}
+
+		// 保存AccessToken
+		await this.saveAccessToken(data)
+		return data
 	}
 
 	async updateAccessToken () {
 		const url = `${api.accessToken}&appid=${this.appID}&secret=${this.appSecret}`
 
 		const data = await this.request({url})
-		console.log(data)
 		const now  = new Date().getTime()
 		const expires_in = now + (data.expires_in - 20) * 1000
 
 		data.expires_in = expires_in
-		console.log(data)
 		return data
 	}
 
@@ -60,8 +64,8 @@ module.exports = class Wechat {
 		const expiresIn = data.expires_in
 		const nowTime = new Date().getTime()
 
-		if (expiresIn > now) {
-			return true 
+		if (expiresIn > nowTime) {
+			return true
 		} else {
 			return false
 		}
