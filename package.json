@@ -1,0 +1,22 @@
+{
+  "name": "wechat-group",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:cubsdiary/wechat-group.git",
+  "author": "yangjing <yangjingpuyu@aliyun.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./check.js",
+    "ngrok": "./bin/ngrok.sh"
+  },
+  "dependencies": {
+    "content-type": "^1.0.4",
+    "ejs": "^2.6.1",
+    "koa": "^2.6.2",
+    "raw-body": "^2.3.3",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "sha1": "^1.1.1",
+    "xml2js": "^0.4.19"
+  }
+}

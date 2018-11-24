@@ -1,0 +1,16 @@
+# Dependencies
+node_modules
+examples/**/*/yarn.lock
+jspm_packages
+package-lock.json
+
+# Dist folder
+dist
+
+# Dist example generation
+examples/**/dist
+
+# OSX
+*.DS_Store
+.AppleDouble
+.LSOverride

@@ -1,0 +1,1 @@
+./bin/sunny clientid 104925170785
