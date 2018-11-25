@@ -15,15 +15,33 @@ exports.initSchema = () => {
 
 exports.connect = (db) => {
   return new Promise((resolve, reject) => {
-    mongoose.set('debug', true)
+
+    let MaxConnection = 0
+    console.log(process.env.NODE_ENV)
+    if (process.env.NODE_ENV !== 'production') {
+      mongoose.set('debug', true)
+    }
+
     mongoose.connect(db, options)
 
     mongoose.connection.on('disconnect', () => {
-      console.log('数据库挂了')
+      MaxConnectTimes++
+
+      if (MaxConnectTimes < 5) {
+        mongoose.connect(db, options)
+      } else {
+        throw new Error('数据库挂了')
+      }
     })
 
     mongoose.connection.on('error', err => {
-      console.log(err)
+      MaxConnectTimes++
+
+      if (MaxConnectTimes < 5) {
+        mongoose.connect(db, options)
+      } else {
+        throw new Error(err)
+      }
     })
 
     mongoose.connection.on('open', () => {

@@ -58,10 +58,9 @@ TokenSchema.statics = {
         token: data.access_token,
         expires_in: data.expires_in
       })
-      console.log(token)
     }
     await token.save()
-    
+
     return token
   }
 }

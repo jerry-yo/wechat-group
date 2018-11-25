@@ -13,8 +13,6 @@ module.exports = class Wechat {
 		this.appSecret = opts.appSecret
 		this.getAccessToken = opts.getAccessToken
 		this.saveAccessToken = opts.saveAccessToken
-
-		this.fetchAccessToken()
 	}
 
 

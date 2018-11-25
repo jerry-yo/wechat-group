@@ -16,15 +16,10 @@ const wechatCNFG = {
 		},
 		saveAccessToken: async (data) => {
 			const res = await Token.saveAccessToken(data)
-			console.log(res, 'wechat  wechatCNFG')
 			return res
 		}
 	}
 }
-
-;(async function () {
-
-})()
 
 exports.test = async () => {
 	const client = new Wechat(wechatCNFG.wechat)
