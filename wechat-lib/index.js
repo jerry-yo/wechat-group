@@ -2,6 +2,8 @@ const fs = require('fs')
 const request = require('request-promise')
 
 const base = 'https://api.weixin.qq.com/cgi-bin/'
+const ticketBase = 'https://mp.weixin.qq.com/cgi-bin/'
+const semanticUrl = 'https://api.weixin.qq.com/semantic/semproxy/search?'
 
 const api = {
 	accessToken: base +  'token?grant_type=client_credential',
@@ -23,10 +25,26 @@ const api = {
 		fetch: base + 'tags/get?',
 		update: base + 'tags/update?',
 		delete: base + 'tags/delete?',
-		fetchUsers: base + 'user/tag/get?',
+		fetchTagUsers: base + 'user/tag/get?',
 		batchTags: base + 'tags/members/batchtagging?',
 		batchUnTags: base + 'tags/members/batchuntagging?',
 		fetchUserTags: base + 'tags/getidlist?'
+	},
+	user: {
+		fetchUserList: base + 'user/get?',
+		remark: base + 'user/info/updateremark?',
+		fetchUserInfo: base + 'user/info?',
+		fetchUsersInfo: base + 'user/info/batchget?'
+	},
+	qrcode: {
+		create: base + 'qrcode/create?',
+		show: ticketBase + 'showqrcode?'
+	},
+	shortUrl: {
+		toShortUrl: base + 'shorturl?'
+	},
+	AI: {
+		translator: base + 'media/voice/translatecontent?'
 	}
 }
 
@@ -257,7 +275,7 @@ module.exports = class Wechat {
 		return {method: 'POST', url, body}
 	}
 
-	fetchUsers (token, id, openId) {
+	fetchTagUsers (token, id, openId) {
 		let body = {
 			tagid: id,
 			next_openid: openId || ''
@@ -281,6 +299,76 @@ module.exports = class Wechat {
 			openid: openId
 		}
 		let url = `${api.tags.fetchUserTags}access_token=${token}`
+
+		return {method: 'POST', url, body}
+	}
+
+	remarkUser (token, openId, remark) {
+		let body = {
+			openid: openId,
+			remark
+		}
+		let url = `${api.user.remark}access_token=${token}`
+
+		return {method: 'POST', url, body}
+	}
+
+	fetchUserList (token, openId) {
+		let next_openid = openId || ''
+		let url = `${api.user.fetchUserList}access_token=${token}&next_openid=${next_openid}`
+
+		return {url}
+	}
+
+	fetchUserInfo (token, openId) {
+		let url = `${api.user.fetchUserInfo}access_token=${token}&openid=${openId}&lang=zh_CN`
+
+		return {url}
+	}
+
+	fetchUserInfoList (token, userList) {
+		let body = {
+			user_list: userList
+		}
+		let url = `${api.user.fetchUsersInfo}access_token=${token}`
+
+		return {method: 'POST', url, body}
+	}
+
+	createQrcode (token, qr) {
+		const url = `${api.qrcode.create}access_token=${token}`
+		const body = qr
+
+		return {method: 'POST', url, body}
+	}
+
+	showQrcode (ticket) {
+		let ticketEnCode = encodeURI(ticket)
+		let url = `${api.qrcode.show}ticket=${ticketEnCode}`
+
+		return url
+	}
+
+	longUrlToShortUrl (token, longUrl) {
+		let body = {
+			action: 'long2short',
+			long_url: longUrl
+		}
+		let url = `${api.shortUrl.toShortUrl}access_token=${token}`
+
+		return {method: 'POST', url, body}
+	}
+
+	semanticServer (token, semantic) {
+		let body = semantic
+		body.appid = this.appID
+		let url = `${semanticUrl}access_token=${token}`
+
+		return {method: 'POST', url, body}
+	}
+
+	translatorServer (token, lfrom, lto, body) {
+		let url = `${api.AI.translator}access_token=${token}&lfrom=${lfrom}&lto=${lto}`
 
 		return {method: 'POST', url, body}
 	}

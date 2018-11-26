@@ -6,61 +6,68 @@ module.exports = async (ctx, next) => {
 	let mp = require('./index')
 	let client = mp.getWechat()
 
-	if (message.MsgType === 'text') {
+	if (message.MsgType === 'event') {
+		let reply
+		if (message.Event === 'LOCATION') {
+			reply = `您上报位置是：${message.Latitude},${message.Longitude}精度：${message.Precision}`
+		}
+		ctx.body = reply
+	} else if (message.MsgType === 'text') {
 		let content = message.Content
 		let reply = 'Oh, 你说的' + content + ' 太复杂了，无法理解！！'
 
 		if (content === '1') {
-			await client.handle('createTag', 'VUEFROM')
-			let tags1 = await client.handle('fetchTags')
+
+			let tags1 = await client.handle('fetchUserList')
 			console.log(tags1)
 			reply = JSON.stringify(tags1)
 
 		} else if (content === '2') {
-			let tags = await client.handle('updateTag', 101, 'VUESSR')
-			console.log(tags)
-			let tags2 = await client.handle('fetchTags')
-			console.log(tags2)
-			reply = JSON.stringify(tags2)
+			let userInfo = await client.handle('fetchUserInfo', message.FromUserName)
+			console.log(userInfo)
+			reply = JSON.stringify(userInfo)
 		} else if (content === '3') {
-			let tags = await client.handle('fetchUsers', 101, '')
-			console.log(tags)
-			reply = JSON.stringify(tags)
+			let arr = [{
+				openid: message.FromUserName,
+				lang: 'zh_CN'
+			}]
+			let userInfo = await client.handle('fetchUserInfoList', arr)
+			console.log(userInfo)
+			reply = JSON.stringify(userInfo)
 		} else if (content === '4') {
-			await client.handle('batchTags', [message.FromUserName], 101)
-			await client.handle('batchTags', [message.FromUserName], 102)
-			await client.handle('batchTags', [message.FromUserName], 103)
-			let tag = await client.handle('fetchUserTags', message.FromUserName)
-			console.log(tag)
-			reply = JSON.stringify(tag)
-		} else if (content === '5') {
-			let tags = await client.handle('batchTags', [message.FromUserName], 101, true)
-			let tag = await client.handle('fetchUsers', 101, '')
-			console.log(tag)
-			reply = JSON.stringify(tag)
-		} else if (content === '6') {
-			let data = await client.handle('uploadMaterial', 'video', resolve(__dirname, '../20181126.mp4'))
-			reply = {
-				type: 'video',
-				mediaId: data.media_id,
-				title: '还有谁？',
-				description: '我最帅，还有谁能比我帅?'
-			}
-		} else if (content === '7') {
-			let data = await client.handle('uploadMaterial',
-				'video',
-				resolve(__dirname, '../20181126.mp4'),
-				{
-					type: 'video',
-					description: '{"title": "这个地方很好", "introduction": "豪车莫不是莱斯劳斯！！！！"}'
+			let qr = {
+				expire_seconds: 604800,
+				action_name: 'QR_SCENE',
+				action_info: {
+					scene: {
+						scene_id: 123
+					}
 				}
-			)
-			reply = {
-				type: 'video',
-				mediaId: data.media_id,
-				title: '豪车 ？？',
-				description: '我最帅，还有谁能比我帅?事实上2'
 			}
+
+			let qrcode = await client.handle('createQrcode', qr)
+			console.log(qrcode)
+			let mini = client.showQrcode(qrcode.ticket)
+			console.log(mini)
+			reply = mini
+		} else if (content === '5') {
+			let url = 'https://coding.imooc.com/class/179.html'
+			let mini = await client.handle('longUrlToShortUrl', url)
+			console.log(mini)
+			reply = mini.short_url
+		} else if (content === '6') {
+			let data = await client.handle('semanticServer', {
+				query: '查一下明天从北京到上海的南航机票',
+				city: '北京',
+				category: 'flight,hotel',
+				uid: message.FromUserName
+			})
+			console.log(data)
+			reply = JSON.stringify(data)
+		} else if (content === '7') {
+			let data = await client.handle('translatorServer', 'zh_CN', 'en_US', '我真的非常可爱，我喜欢吃橘子。')
+			console.log(data)
+			reply = JSON.stringify(data)
 		} else if (content === '8') {
 			let data = await client.handle('uploadMaterial',
 				'image',
