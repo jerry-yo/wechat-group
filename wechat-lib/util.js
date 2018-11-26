@@ -22,7 +22,7 @@ const formatMessage = result => {
 
 			if (!(item instanceof Array) || item.length === 0) {
 				continue
-			} 
+			}
 
 			if (item.length === 1) {
 				let val  = item[0]
@@ -61,13 +61,12 @@ const tpl = (content, message) => {
 
 	let info = Object.assign({}, {
 		content: content,
-		msgType: 'text',
+		msgType: type,
 		createTime: new Date().getTime(),
 		toUserName: message.FromUserName,
-		fromUserName: message.ToUserName,
-		msgId: message.MsgId
+		fromUserName: message.ToUserName
 	})
-	
+
 	return template(info)
 }
 

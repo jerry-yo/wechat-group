@@ -9,9 +9,6 @@ const {initSchema, connect} = require('./app/database/init')
 
   initSchema()
   // 测试token存储
-  const {test} = require('./wechat/index')
-  await test()
-
   const app = new Koa()
 
   //加载认证的中间件

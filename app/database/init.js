@@ -17,7 +17,6 @@ exports.connect = (db) => {
   return new Promise((resolve, reject) => {
 
     let MaxConnection = 0
-    console.log(process.env.NODE_ENV)
     if (process.env.NODE_ENV !== 'production') {
       mongoose.set('debug', true)
     }
@@ -47,9 +46,7 @@ exports.connect = (db) => {
     mongoose.connection.on('open', () => {
       resolve()
       console.log('================== ')
-      console.log('================== ')
       console.log('    数据库连接成功   ')
-      console.log('================== ')
       console.log('================== ')
     })
   })

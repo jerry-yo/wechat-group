@@ -33,7 +33,6 @@ module.exports = (opts, reply) => {
 			const message = util.formatMessage(content.xml)
 
 			ctx.weixin = message
-			console.log('weixin', message)
 			await reply.apply(ctx, [ctx, next])
 
 			const replyBody = ctx.body
@@ -45,6 +44,6 @@ module.exports = (opts, reply) => {
 			ctx.type = 'application/xml'
 			ctx.body = xml
 
-		} 
+		}
 	}
 }

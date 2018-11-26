@@ -5,38 +5,44 @@ const tpl = `
 	<ToUserName><![CDATA[<%= toUserName %>]]></ToUserName>
 	<FromUserName><![CDATA[<%= fromUserName %>]]></FromUserName>
 	<CreateTime><%= createTime %></CreateTime>
+	<MsgType><![CDATA[<%= msgType %>]]></MsgType>
 	<% if (msgType === 'text') { %>
-		<MsgType><![CDATA[text]]></MsgType>
 		<Content><![CDATA[<%= content %>]]></Content>
 	<% } else if (msgType === 'image') { %>
-		<MsgType><![CDATA[image]]></MsgType>
-		<PicUrl><![CDATA[<%= content.picUrl %>]]></PicUrl>
-		<MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
+		<Image>
+			<MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
+		</Image>
 	<% } else if (msgType === 'voice') { %>
-		<MsgType><![CDATA[voice]]></MsgType>
-		<MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
-		<Format><![CDATA[<%= content.format %>]]></Format>
+		<Voice>
+			<MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
+		</Voice>
 	<% } else if (msgType === 'video') { %>
-		<MsgType><![CDATA[video]]></MsgType>
-		<MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
-		<ThumbMediaId><![CDATA[<%= content.thumbMediaId %>]]></ThumbMediaId>
-	<% } else if (msgType === 'shortvideo') { %>
-		<MsgType><![CDATA[shortvideo]]></MsgType>
-		<MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
-		<ThumbMediaId><![CDATA[<%= content.thumbMediaId %>]]></ThumbMediaId>
-	<% } else if (msgType === 'location') { %>
-		<MsgType><![CDATA[location]]></MsgType>
-		<Location_X><%= content.locationX %></Location_X>
-		<Location_Y><%= content.locationY %></Location_Y>
-		<Scale><%= content.scale %></Scale>
-		<Label><![CDATA[<%= content.label %>]]></Label>
-	<% } else if (msgType === 'link') { %>
-		<MsgType><![CDATA[link]]></MsgType>
-		<Title><![CDATA[<%= content.title %>]]></Title>
-		<Description><![CDATA[<%= content.description %>]]></Description>
-		<Url><![CDATA[<%= content.url %>]]></Url>
+		<Video>
+			<MediaId><![CDATA[<%= content.mediaId %>]]></MediaId>
+			<Title><![CDATA[<%= content.title %>]]></Title>
+			<Description><![CDATA[<%= content.description %>]]></Description>
+		</Video>
+	<% } else if (msgType === 'music') { %>
+		<Music>
+			<Title><![CDATA[<%= content.title %>]]></Title>
+			<Description><![CDATA[<%= content.description %>]]></Description>
+			<MusicUrl><![CDATA[<%= content.musicUrl %>]]></MusicUrl>
+			<HQMusicUrl><![CDATA[<%= content.hqMusicUrl %>]]></HQMusicUrl>
+			<ThumbMediaId><![CDATA[<%= content.mediaId %>]]></ThumbMediaId>
+		</Music>
+	<% } else if (msgType === 'news') { %>
+		<ArticleCount><![CDATA[<%= content.length %>]]></ArticleCount>
+    <Articles>
+      <% content.forEach(function(item) { %>
+        <item>
+          <Title><![CDATA[<%= item.title %>]]></Title>
+          <Description><![CDATA[<%= item.description %>]]></Description>
+          <PicUrl><![CDATA[<%= item.picUrl %>]]></PicUrl>
+          <Url><![CDATA[<%= item.url %>]]></Url>
+        </item>
+      <% }) %>
+    </Articles>
 	<% } %>
-	<MsgId><%= msgId %></MsgId>
 </xml>
 `
 
