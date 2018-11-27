@@ -45,6 +45,15 @@ const api = {
 	},
 	AI: {
 		translator: base + 'media/voice/translatecontent?'
+	},
+	menu: {
+		create: base + 'menu/create?',
+		fetch: base + 'menu/get?',
+		delete: base + 'menu/delete?',
+		addConditional: base + 'menu/addconditional?',
+		delConditional: base + 'menu/delconditional?',
+		matchConditional: base + 'menu/trymatch?',
+		getCurrentMenu: base + 'get_current_selfmenu_info?'
 	}
 }
 
@@ -173,8 +182,7 @@ module.exports = class Wechat {
 		let form = {
 			media_id: mediaId
 		}
-		let fetchUrl = api.permanent.fetch
-		let url = `${fetchUrl}access_token=${token}`
+		let url = `${api.permanent.fetch}access_token=${token}`
 
 		return {
 			method: 'POST',
@@ -371,5 +379,53 @@ module.exports = class Wechat {
 		let url = `${api.AI.translator}access_token=${token}&lfrom=${lfrom}&lto=${lto}`
 
 		return {method: 'POST', url, body}
+	}
+
+	createMenu (token, options) {
+		let url = `${api.menu.create}access_token=${token}`
+
+		return {method: 'POST', url, body: options}
+	}
+
+	fetchMenu (token) {
+		let url = `${api.menu.fetch}access_token=${token}`
+
+		return {url}
+	}
+
+	deleteMenu (token) {
+		let url = `${api.menu.delete}access_token=${token}`
+
+		return {url}
+	}
+
+	addConditional (token, options) {
+		let url = `${api.menu.addConditional}access_token=${token}`
+
+		return {method: 'POST', url, body: options}
+	}
+
+	delConditional (token, menuid) {
+		let body = {
+			menuid
+		}
+		let url = `${api.menu.addConditional}access_token=${token}`
+
+		return {method: 'POST', url, body}
+	}
+
+	matchConditional (token, userId) {
+		let body = {
+			user_id: userId
+		}
+		let url = `${api.menu.matchConditional}access_token=${token}`
+
+		return {method: 'POST', url, body}
+	}
+
+	getCurrentMenu (token) {
+		let url = `${api.menu.getCurrentMenu}access_token=${token}`
+
+		return {url}
 	}
 }
