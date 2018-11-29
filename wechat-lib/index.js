@@ -288,7 +288,7 @@ module.exports = class Wechat {
 			tagid: id,
 			next_openid: openId || ''
 		}
-		let url = `${api.tags.fetchUsers}access_token=${token}`
+		let url = `${api.tags.fetchTagUsers}access_token=${token}`
 		return {method: 'POST', url, body}
 	}
 
