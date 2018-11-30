@@ -54,6 +54,9 @@ const api = {
 		delConditional: base + 'menu/delconditional?',
 		matchConditional: base + 'menu/trymatch?',
 		getCurrentMenu: base + 'get_current_selfmenu_info?'
+	},
+	ticket: {
+		fetch: base + 'ticket/getticket?'
 	}
 }
 
@@ -64,6 +67,8 @@ module.exports = class Wechat {
 		this.appSecret = opts.appSecret
 		this.getAccessToken = opts.getAccessToken
 		this.saveAccessToken = opts.saveAccessToken
+		this.getTicket = opts.getTicket
+		this.saveTicket = opts.saveTicket
 	}
 
 	async request (options) {
@@ -84,7 +89,7 @@ module.exports = class Wechat {
 		let data = await this.getAccessToken()
 
 		// 验证AccessToken是否过期
-		if (!this.isValidToken(data)) {
+		if (!this.isValid(data, 'access_token')) {
 			data = await this.updateAccessToken()
 		}
 
@@ -104,12 +109,37 @@ module.exports = class Wechat {
 		return data
 	}
 
-	isValidToken (data) {
-		if (!data || !data.expires_in) {
+	async fetchTicket (token) {
+		// 获取保存的AccessToken
+		let data = await this.getTicket()
+
+		// 验证AccessToken是否过期
+		if (!this.isValid(data, 'ticket')) {
+			data = await this.updateTicket()
+		}
+
+		// 保存AccessToken
+		await this.saveTicket(data)
+		return data
+	}
+
+	async updateTicket (token) {
+		const url = `${api.ticket.fetch}access_token=${token}&type=jsapi`
+
+		const data = await this.request({url})
+		const now  = new Date().getTime()
+		const expires_in = now + (data.expires_in - 20) * 1000
+
+		data.expires_in = expires_in
+		return data
+	}
+
+	isValid (data, name) {
+		if (!data || !data[name].expires_in) {
 			return false
 		}
 
-		const expiresIn = data.expires_in
+		const expiresIn = data[name].expires_in
 		const nowTime = new Date().getTime()
 
 		if (expiresIn > nowTime) {

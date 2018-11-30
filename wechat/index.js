@@ -18,6 +18,15 @@ const wechatCNFG = {
 		saveAccessToken: async (data) => {
 			const res = await Token.saveAccessToken(data)
 			return res
+		},
+		getTicket: async () => {
+			const res = await Token.getTicket()
+
+			return res
+		},
+		saveTicket: async (data) => {
+			const res = await Token.saveTicket(data)
+			return res
 		}
 	}
 }

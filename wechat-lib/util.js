@@ -69,5 +69,43 @@ const tpl = (content, message) => {
 
 	return template(info)
 }
-
 exports.tpl = tpl
+
+const createNonce = () => {
+	return Math.random().toString(36).substr(2, 16)
+}
+
+const createTimestamep = () => {
+	return parseInt(new Date().getTime() / 1000, 10) + ''
+}
+
+cosnt signIt = (...args) => {
+	let keys = Object.keys(args)
+	let newArgs = {}
+	let str = ''
+
+	keys = keys.sort()
+
+	keys.forEach(key => {
+		newArgs[key.toLowerCase()] = args[key]
+	})
+
+	for (let k in newArgs) {
+		str += '&' + k + '=' + newArgs[k]
+ 	}
+
+	return str.substr(1)
+}
+
+const sign = (ticket, url) => {
+	const noncestr = createNonce()
+	const timestamp = createTimestamep()
+	const signature = signIt(nonce, ticket, timestamp, url)
+
+	return {
+		noncestr,
+		timestamp,
+		signature
+	}
+}
+exports.sign = sign

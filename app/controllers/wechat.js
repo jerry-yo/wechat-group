@@ -1,6 +1,7 @@
 const reply = require('../../wechat/reply')
 const config = require('../../config/config')
-const {getOAuth} = require('../../wechat')
+const {getOAuth, getWechat} = require('../../wechat')
+const api = require('../api/index')
 const wechatMiddle = require('../../wechat-lib/middleware')
 
 //加载认证的中间件
@@ -14,11 +15,10 @@ exports.hear = async (ctx, next) => {
 }
 
 exports.oauth = async (ctx, next) => {
-  const oauth = getOAuth()
   const target = config.baseUrl + 'userinfo'
   const scope = 'snsapi_userinfo'
   const state = ctx.query.id
-  const url = oauth.getAuthorizeURL(scope, target, state)
+  const url = api.wechat.getAuthorizeURL(scope, target, state)
   ctx.redirect(url)
 }
 
@@ -29,4 +29,10 @@ exports.userinfo = async (ctx, next) => {
   const userData = await oauth.getUserInfo(tokenData.access_token, tokenData.openid)
 
   ctx.body = userData
+}
+
+exports.jssdk = async (ctx, next) => {
+  const url = ctx.href
+  const params = await api.wechat.getSignature(url)
+  await ctx.render('wechat/sdk', params)
 }

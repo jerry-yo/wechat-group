@@ -1,6 +1,7 @@
 const Wechat = require('../app/controllers/wechat')
 
 const router = require('koa-router')()
+router.get('/jssdk', Wechat.jssdk)
 
 router.get('/wx-hear', Wechat.hear)
 router.post('/wx-hear', Wechat.hear)
