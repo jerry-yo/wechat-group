@@ -1,4 +1,5 @@
 const {getOAuth, getWechat} = require('../../wechat/index')
+const util = require('../../wechat-lib/util')
 
 exports.getSignature = async (url) => {
   const client = getWechat()
@@ -7,10 +8,11 @@ exports.getSignature = async (url) => {
   const ticketData = await client.fetchTicket(token)
   const ticket = ticketData.ticket
 
-  let params = sign(ticket, url)
-  params.appId = client.appID
+  let params = util.sign(ticket, url)
 
-  return params
+  return Object.assign(params, {
+    appId: client.appID
+  })
 }
 
 

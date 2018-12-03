@@ -115,9 +115,8 @@ module.exports = class Wechat {
 
 		// 验证AccessToken是否过期
 		if (!this.isValid(data, 'ticket')) {
-			data = await this.updateTicket()
+			data = await this.updateTicket(token)
 		}
-
 		// 保存AccessToken
 		await this.saveTicket(data)
 		return data

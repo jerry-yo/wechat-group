@@ -48,7 +48,6 @@ TicketSchema.statics = {
     let ticket = await this.findOne({
       name: 'ticket'
     })
-
     if (ticket) {
       ticket.ticket = data.ticket
       ticket.expires_in = data.expires_in

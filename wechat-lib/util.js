@@ -1,5 +1,6 @@
 const xml2js = require('xml2js')
 const template = require('./tpl')
+const sha1 = require('sha1')
 
 exports.parseXML = xml => {
 	return new Promise((resolve, reject) => {
@@ -79,29 +80,37 @@ const createTimestamep = () => {
 	return parseInt(new Date().getTime() / 1000, 10) + ''
 }
 
-cosnt signIt = (...args) => {
-	let keys = Object.keys(args)
+const signIt = (params) => {
+	console.log(params)
+	let keys = Object.keys(params)
 	let newArgs = {}
 	let str = ''
-
 	keys = keys.sort()
-
 	keys.forEach(key => {
-		newArgs[key.toLowerCase()] = args[key]
+		newArgs[key.toLowerCase()] = params[key]
 	})
-
 	for (let k in newArgs) {
 		str += '&' + k + '=' + newArgs[k]
  	}
-
 	return str.substr(1)
 }
+const shaIt = (noncestr, ticket, timestamp, url) => {
+	let ret = {
+		jsapi_ticket: ticket,
+		noncestr: noncestr,
+		timestamp: timestamp,
+		url
+	}
 
+	const str = signIt(ret)
+	const sha = sha1(str)
+
+	return sha
+}
 const sign = (ticket, url) => {
 	const noncestr = createNonce()
 	const timestamp = createTimestamep()
-	const signature = signIt(nonce, ticket, timestamp, url)
-
+	const signature = shaIt(noncestr, ticket, timestamp, url)
 	return {
 		noncestr,
 		timestamp,

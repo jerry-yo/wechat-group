@@ -4,6 +4,7 @@ const WechatOAuth = require('../wechat-lib/oauth')
 const mongoose = require('mongoose')
 
 const Token = mongoose.model('Token')
+const Ticket = mongoose.model('Ticket')
 
 const wechatCNFG = {
 	wechat: {
@@ -20,12 +21,12 @@ const wechatCNFG = {
 			return res
 		},
 		getTicket: async () => {
-			const res = await Token.getTicket()
+			const res = await Ticket.getTicket()
 
 			return res
 		},
 		saveTicket: async (data) => {
-			const res = await Token.saveTicket(data)
+			const res = await Ticket.saveTicket(data)
 			return res
 		}
 	}
