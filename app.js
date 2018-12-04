@@ -1,6 +1,8 @@
 const Koa = require('koa')
 const {resolve} = require('path')
 const moment = require('moment')
+const bodyParser = require('koa-bodyparser')
+const session = require('koa-session')
 const config = require('./config/config')
 const {initSchema, connect} = require('./app/database/init')
 
@@ -18,7 +20,9 @@ const {initSchema, connect} = require('./app/database/init')
       moment: moment
     }
   }))
-
+  app.keys = ['wechat_movie']
+  app.use(session(app))
+  app.use(bodyParser())
   const router = require('./config/routes')
   app.use(router.routes())
 
