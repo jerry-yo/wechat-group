@@ -26,7 +26,6 @@ exports.signup = async (ctx, next) => {
     password,
     nickname
   } = ctx.request.body.user
-  console.log('get logger', email, password, nickname)
   let user = await User.findOne({email})
 
   if (user) return ctx.redirect('/user/signin')
@@ -36,9 +35,9 @@ exports.signup = async (ctx, next) => {
     nickname,
     password
   })
-  console.log('new User', user)
   ctx.session.user = {
     _id: user._id,
+    role: user.role,
     nickname: user.nickname
   }
 
@@ -54,11 +53,11 @@ exports.signin = async (ctx, next) => {
   if (!user) return ctx.redirect('/user/signup')
 
   const isMatch = await user.comparePassword(password, user.password)
-  console.log(user)
 
   if (isMatch) {
     ctx.session.user = {
       _id: user._id,
+      role: user.role,
       nickname: user.nickname
     }
 
@@ -72,4 +71,33 @@ exports.logout = async (ctx, next) => {
   ctx.session.user = {}
 
   ctx.redirect('/')
+}
+
+exports.list = async (ctx, next) => {
+  const users = await User.find({}).sort('meta.updateAt')
+  await ctx.render('pages/userlist', {
+    title: '用户列表',
+    users
+  })
+}
+// 需要登录的中间件控制
+exports.signRequired = async (ctx, next) => {
+  const user = ctx.session.user
+
+  if (!user || !user._id) {
+    return ctx.redirect('/')
+  }
+
+  await next()
+}
+
+// 需要admin 权限的中间件控制=
+exports.adminRequired = async (ctx, next) => {
+  const user = ctx.session.user
+
+  if (user.role !== 'admin') {
+    return ctx.redirect('/user/signin')
+  }
+
+  await next()
 }

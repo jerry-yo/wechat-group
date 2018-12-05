@@ -1,6 +1,7 @@
 const Koa = require('koa')
 const {resolve} = require('path')
 const moment = require('moment')
+const mongoose = require('mongoose')
 const bodyParser = require('koa-bodyparser')
 const session = require('koa-session')
 const config = require('./config/config')
@@ -23,6 +24,31 @@ const {initSchema, connect} = require('./app/database/init')
   app.keys = ['wechat_movie']
   app.use(session(app))
   app.use(bodyParser())
+
+  app.use(async (ctx, next) => {
+    const User = mongoose.model('User')
+    let user = ctx.session.user
+
+    if (user && user._id) {
+      user = await User.findOne({_id: user._id})
+      ctx.session.user = {
+        _id: user._id,
+        role: user.role,
+        nickname: user.nickname
+      }
+      ctx.state = Object.assign(ctx.state, {
+        user: {
+          _id: user._id,
+          role: user.role,
+          nickname: user.nickname
+        }
+      })
+    } else {
+      ctx.session.user = null
+    }
+
+    await next()
+  })
   const router = require('./config/routes')
   app.use(router.routes())
 
