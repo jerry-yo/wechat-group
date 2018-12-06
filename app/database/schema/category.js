@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 
-const CateporySchema = new Schema({
+const CategorySchema = new Schema({
   // 分类名
   name: {
     unique: true,
@@ -30,7 +30,7 @@ const CateporySchema = new Schema({
   }
 })
 
-CateporySchema.pre('save', function (next) {
+CategorySchema.pre('save', function (next) {
   if (this.isNew) {
     this.meta.createdAt = this.meta.updateAt = Date.now()
   } else {
@@ -40,4 +40,4 @@ CateporySchema.pre('save', function (next) {
   next()
 })
 
-const Catepory = mongoose.model('Catepory', CateporySchema)
+const Category = mongoose.model('Category', CategorySchema)

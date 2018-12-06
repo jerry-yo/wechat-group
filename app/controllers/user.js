@@ -101,3 +101,24 @@ exports.adminRequired = async (ctx, next) => {
 
   await next()
 }
+
+exports.del = async (ctx, next) => {
+  const id = ctx.query.id
+  let user
+  if (id) {
+    user = await User.findOne({_id: id})
+  }
+
+  if (!user) {
+    return (ctx.body = {
+      success: false
+    })
+  }
+
+  try {
+    await User.remove({_id: id})
+    ctx.body = {success: true}
+  } catch (err) {
+    ctx.body = {success: false}
+  }
+}

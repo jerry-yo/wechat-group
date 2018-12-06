@@ -1,8 +1,8 @@
 const Wechat = require('../app/controllers/wechat')
 const User = require('../app/controllers/user')
 const Index = require('../app/controllers/index')
-const Catepory = require('../app/controllers/catepory')
-
+const Category = require('../app/controllers/category')
+const Movie = require('../app/controllers/movie')
 const router = require('koa-router')()
 
 // index
@@ -27,11 +27,20 @@ router.post('/user/signup', User.signup)
 router.get('/logout', User.logout)
 
 // 用户列表管理
-router.get('/user/signin', User.signRequired, User.adminRequired, User.list)
+router.get('/admin/user/list', User.signRequired, User.adminRequired, User.list)
+router.delete('/admin/user', User.signRequired, User.adminRequired, User.del)
 // 后台的分类管理页面
-router.post('/admin/catepory', User.signRequired, User.adminRequired, Catepory.new)
-router.get('/admin/catepory', User.signRequired, User.adminRequired, Catepory.show)
-router.get('/admin/catepory/list', User.signRequired, User.adminRequired, Catepory.list)
-router.get('/admin/catepory/update/:id', User.signRequired, User.adminRequired, Catepory.show)
+router.post('/admin/category', User.signRequired, User.adminRequired, Category.new)
+router.get('/admin/category', User.signRequired, User.adminRequired, Category.show)
+router.delete('/admin/category', User.signRequired, User.adminRequired, Category.del)
+router.get('/admin/category/list', User.signRequired, User.adminRequired, Category.list)
+router.get('/admin/category/update/:_id', User.signRequired, User.adminRequired, Category.show)
+
+// 后台的电影管理页面
+router.post('/admin/movie', User.signRequired, User.adminRequired, Movie.new)
+router.get('/admin/movie', User.signRequired, User.adminRequired, Movie.show)
+router.delete('/admin/movie', User.signRequired, User.adminRequired, Movie.del)
+router.get('/admin/movie/list', User.signRequired, User.adminRequired, Movie.list)
+router.get('/admin/movie/update/:_id', User.signRequired, User.adminRequired, Movie.show)
 
 module.exports = router
