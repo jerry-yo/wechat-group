@@ -3,10 +3,13 @@ const User = require('../app/controllers/user')
 const Index = require('../app/controllers/index')
 const Category = require('../app/controllers/category')
 const Movie = require('../app/controllers/movie')
+const KoaBody = require('koa-body')
 const router = require('koa-router')()
 
 // index
 router.get('/', Index.homePage)
+// 电影详情页
+router.get('/movie/:_id', Movie.detail)
 
 // 微信页面授权
 router.get('/jssdk', Wechat.jssdk)
@@ -37,7 +40,7 @@ router.get('/admin/category/list', User.signRequired, User.adminRequired, Catego
 router.get('/admin/category/update/:_id', User.signRequired, User.adminRequired, Category.show)
 
 // 后台的电影管理页面
-router.post('/admin/movie', User.signRequired, User.adminRequired, Movie.new)
+router.post('/admin/movie', User.signRequired, User.adminRequired, KoaBody({multipart: true, multiples: false}), Movie.savePoster, Movie.new)
 router.get('/admin/movie', User.signRequired, User.adminRequired, Movie.show)
 router.delete('/admin/movie', User.signRequired, User.adminRequired, Movie.del)
 router.get('/admin/movie/list', User.signRequired, User.adminRequired, Movie.list)

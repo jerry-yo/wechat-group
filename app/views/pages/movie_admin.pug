@@ -3,7 +3,7 @@ extends ../layout
 block content
   .container
     .row
-      form.form-horizontal(method='post', action='/admin/movie')
+      form.form-horizontal(method='post', action='/admin/movie', enctype="multipart/form-data")
         if movie
           input(type='hidden', name='_id', value=movie._id)
         .form-group
@@ -75,6 +75,8 @@ block content
           cache: true,
           jsonp: 'callback',
           success: function (data) {
+            console.log('-----------')
+            console.log(data)
             $('#inputTitle').val(data.title)
             $('#inputDirector').val(data.directors[0].name)
             $('#inputCountry').val(data.countries[0])

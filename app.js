@@ -2,6 +2,7 @@ const Koa = require('koa')
 const {resolve} = require('path')
 const moment = require('moment')
 const mongoose = require('mongoose')
+const serve = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const session = require('koa-session')
 const config = require('./config/config')
@@ -24,6 +25,7 @@ const {initSchema, connect} = require('./app/database/init')
   app.keys = ['wechat_movie']
   app.use(session(app))
   app.use(bodyParser())
+  app.use(serve(resolve(__dirname, './public')))
 
   app.use(async (ctx, next) => {
     const User = mongoose.model('User')

@@ -33,7 +33,7 @@ block content
                 td #{item.director}
                 td #{item.country}
                 td #{item.year}
-                td #{item.pv}
+                td #{item.pv ? item.pv : 0}
                 td #{moment(item.createdAt).format('MM/DD/YYYY')}
                 td: a(target='_blank', href='/admin/movie/update/' + item._id) 修改
                 td: a(target='_blank', href='/movie/' + item._id) 查看
