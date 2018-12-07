@@ -1,13 +1,14 @@
 const mongoose = require('mongoose')
 const Category = mongoose.model('Category')
-
+const Movie = mongoose.model('Movie')
+const api = require('../api')
 // 0. 电影分类model 创建
 // 1. 电影分类的录入页面
 exports.show = async (ctx, next) => {
   let {_id} = ctx.params
   let category = {}
   if (_id) {
-    category = await Category.findOne({_id})
+    category = await api.movie.findCategoryById(_id)
   }
   await ctx.render('pages/category_admin', {
     title: '后台分类录入页面',
@@ -20,7 +21,7 @@ exports.new = async (ctx, next) => {
   let category
 
   if (_id) {
-    category = await Category.findOne({_id})
+    category = await api.movie.findCategoryById(_id)
   }
 
   if (category) {
@@ -35,8 +36,8 @@ exports.new = async (ctx, next) => {
 // 3. 电影分类的后台列表
 
 exports.list = async (ctx, next) => {
-  const categories = await Category.find({})
-  console.log(categories)
+  console.log(ctx)
+  const categories = await api.movie.findCategories()
   await ctx.render('pages/category_list', {
     title: '标签列表',
     categories
@@ -44,19 +45,12 @@ exports.list = async (ctx, next) => {
 }
 exports.del = async (ctx, next) => {
   const id = ctx.query.id
-  let category
-  if (id) {
-    category = await Category.findOne({_id: id})
-  }
-
-  if (!category) {
-    return (ctx.body = {
-      success: false
-    })
-  }
 
   try {
     await Category.remove({_id: id})
+    await Movie.remove({
+      category: id
+    })
     ctx.body = {success: true}
   } catch (err) {
     ctx.body = {success: false}
