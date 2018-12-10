@@ -5,7 +5,7 @@ const api = require('../api')
 // 0. 电影分类model 创建
 // 1. 电影分类的录入页面
 exports.show = async (ctx, next) => {
-  let {_id} = ctx.params
+  let { _id } = ctx.params
   let category = {}
   if (_id) {
     category = await api.movie.findCategoryById(_id)
@@ -46,13 +46,13 @@ exports.del = async (ctx, next) => {
   const id = ctx.query.id
 
   try {
-    await Category.remove({_id: id})
+    await Category.remove({ _id: id })
     await Movie.remove({
       category: id
     })
-    ctx.body = {success: true}
+    ctx.body = { success: true }
   } catch (err) {
-    ctx.body = {success: false}
+    ctx.body = { success: false }
   }
 }
 // 4. 对应的分类的路由规则

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Category = mongoose.model('Category')
 const Movie = mongoose.model('Movie')
-const rp = require('request-promise')
+const request = require('request-promise')
 const _ = require('lodash')
 
 const updateMovies = async (movie) => {
@@ -10,7 +10,7 @@ const updateMovies = async (movie) => {
     json: true
   }
 
-  const data = await rp(options)
+  const data = await request(options)
 
   _.extend(movie, {
     country: data.countries[0],
@@ -52,7 +52,7 @@ exports.searchByDouban = async (q) => {
     json: true
   }
 
-  const data = await rp(options)
+  const data = await request(options)
   let subjects = []
   let movies = []
 

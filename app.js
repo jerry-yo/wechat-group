@@ -16,7 +16,7 @@ const {initSchema, connect} = require('./app/database/init')
   const app = new Koa()
   const views = require('koa-views')
 
-  app.use(views(resolve(__dirname + '/app/views'), {
+  app.use(views(resolve(__dirname, 'app/views'), {
     extension: 'pug',
     options: {
       moment: moment

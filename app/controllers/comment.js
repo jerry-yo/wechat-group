@@ -15,7 +15,7 @@ exports.save = async (ctx, next) => {
     comment.replies.push(reply)
     await comment.save()
 
-    ctx.body = {success: true}
+    ctx.body = { success: true }
   } else {
     let comment = new Comment({
       movie: commentData.movie,
@@ -25,6 +25,6 @@ exports.save = async (ctx, next) => {
 
     await comment.save()
 
-    ctx.body = {success: true}
+    ctx.body = { success: true }
   }
 }

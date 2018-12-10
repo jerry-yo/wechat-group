@@ -16,9 +16,11 @@ const UserSchema = new Schema({
     type: String,
     default: 'user'
   },
-  // 兼容各个微信应用，小程序或者公众号的微信用户ID
+  // 兼容各个微信应用，小程序或者公众号的微信用户 ID
   openid: [String],
   unionid: String,
+  // 来自哪个渠道关注的
+  from: String,
   nickname: String,
   address: String,
   province: String,
@@ -35,19 +37,18 @@ const UserSchema = new Schema({
     required: true,
     default: 0
   },
-  lock_until: Number,
+  lockUntil: Number,
   meta: {
     createdAt: {
       type: Date,
       default: Date.now()
     },
-    updateAt: {
+    updatedAt: {
       type: Date,
       default: Date.now()
     }
   }
 })
-
 UserSchema.virtual('isLocked').get(function () {
   return !!(this.lock_until && this.lock_until > Date.now())
 })
