@@ -39,7 +39,6 @@ TicketSchema.statics = {
     })
     if (ticket && ticket.ticket) {
       ticket.ticket = ticket.ticket
-      console.log(ticket, 'get')
     }
 
     return ticket

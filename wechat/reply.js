@@ -1,4 +1,17 @@
 const {resolve} = require('path')
+const commonMenu = require('./menu')
+const config = require('../config/config')
+const api = require('../app/api/index')
+
+const help = '亲爱的，欢迎关注时光的余热\n' +
+  '回复 1-3，测试文字回复\n' +
+  '回复 4，测试图片回复\n' +
+  '回复 首页，进入网站首页\n' +
+  '回复 电影名字，查询电影信息\n' +
+  '点击帮助，获取帮助信息\n' +
+  '某些功能呢订阅号无权限，比如网页授权\n' +
+  '回复语音，查询电影信息\n' +
+  '也可以点击 <a href="' + config.baseUrl + '/sdk">语音查电影</a>，查询电影信息\n'
 
 module.exports = async (ctx, next) => {
 	const message = ctx.weixin
@@ -41,21 +54,47 @@ module.exports = async (ctx, next) => {
 		let content = message.Content
 		let reply = 'Oh, 你说的' + content + ' 太复杂了，无法理解！！'
 
-		if (content === '1') {
-			reply = '完成'
-		} else if (content === '2') {
-			reply = '删除菜单'
-		} else if (content === '3') {
-			reply = 'sss'
-		} else if (content === '4') {
-			reply = 'mini'
-		} else if (content === '5') {
-			reply = '打标签'
-		} else if (content === '6') {
-			reply = 'JSON.stringify(data)'
-		}
-		ctx.body = reply
-	}
+		if (content === '首页') {
+      reply = [{
+        title: '时光的预热',
+        description: '匆匆岁月时光去，总有一款你最爱',
+        picUrl: 'https://imoocday7.oss-cn-beijing.aliyuncs.com/WX20180701-224844.png',
+        url: config.baseUrl
+      }]
+    } else {
+      let movies = await api.movie.searchByKeyword(content)
+      reply = []
+
+      if (!movies || movies.length === 0) {
+        let catData = await api.movie.findMoviesByCat(content)
+
+        if (catData) {
+          movies = catData.movies
+        }
+      }
+
+      if (!movies || movies.length === 0) {
+        movies = await api.movie.searchByDouban(content)
+      }
+
+      if (!movies || movies.length) {
+        movies = movies.slice(0, 4)
+
+        movies.forEach(movie => {
+          reply.push({
+            title: movie.title,
+            description: movie.summary,
+            picUrl: movie.poster.indexOf('http') > -1 ? movie.poster : (config.baseUrl + '/upload/' + movie.poster),
+            url: config.baseUrl + '/movie/' + movie._id
+          })
+        })
+      } else {
+        reply = '没有查询到与 ' + content + ' 相关的电影，要不要换一个名字试试看哦！'
+      }
+    }
+
+    ctx.body = reply
+  }
 
 	await next()
 }

@@ -23,11 +23,7 @@ exports.oauth = async (ctx, next) => {
 }
 
 exports.userinfo = async (ctx, next) => {
-  const oauth = getOAuth()
-  const code = ctx.query.code
-  const tokenData = await oauth.fetchAccessToken(code)
-  const userData = await oauth.getUserInfo(tokenData.access_token, tokenData.openid)
-
+  const userData = await api.wechat.getUserinfoByCode(ctx.query.code)
   ctx.body = userData
 }
 
@@ -35,4 +31,79 @@ exports.jssdk = async (ctx, next) => {
   const url = ctx.href
   const params = await api.wechat.getSignature(url)
   await ctx.render('wechat/sdk', params)
+}
+
+function isWechat (ua) {
+  if (ua.indexOf('MicroMessenger') >= 0) {
+    return true 
+  } else {
+    return false
+  }
+}
+
+exports.checkWechat = async (ctx, next) => {
+  if (ctx.request.url === '/favicon.ico') {
+    return
+  }
+  const ua  = ctx.headers['user-agent']
+  const code = ctx.query.code
+  // 所有的网页请求都会流经这个中间件，包括微信的网页访问
+  // 针对POST非GET请求，不走用户授权流程
+  if (ctx.method === 'GET') {
+    // 如果参数带Code， 说明已经授权
+    if (code || ctx.session.user) {
+      await next()
+      // 如果没有code ，且来自微信访问，就可以配置授权的跳转
+    } else if (isWechat(ua)) {
+      const target = ctx.href
+      const scope = 'snsapi_userinfo'
+      const url = await api.wechat.getAuthorizeURL(scope, target, 'fromWechat')
+      ctx.redirect(url)
+      await next()
+    } else {
+      await next()
+    }
+  } else {
+    await next()
+  }
+}
+
+exports.wechatRedirect = async (ctx, next) => {
+  const {code, state} = ctx.query
+
+  if (code && state === 'fromWechat') {
+    const userData = await api.wechat.getUserinfoByCode(code)
+    // if (userData.openid) {
+    let user = await api.wechat.getUserByOpenid(userData.openid)
+    if (!user) {
+      user = await api.wechat.saveWechatUser(userData)
+    }
+    ctx.session.user = {
+      _id: user._id,
+      role: user.role,
+      nickname: user.nickname
+    }
+
+    ctx.state = Object.assign(ctx.state, {
+      user: {
+        _id: user._id,
+        nickname: user.nickname
+      }
+    })
+    ctx.redirect(config.baseUrl)
+  }
+  await next()
+}
+
+exports.getSDKSignature = async (ctx, next) => {
+  let url = ctx.query.url
+
+  url = decodeURIComponent(url)
+
+  const params = await api.wechat.getSignature(url)
+
+  ctx.body = {
+    success: true,
+    data: params
+  }
 }

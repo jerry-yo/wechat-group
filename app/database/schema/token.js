@@ -39,7 +39,6 @@ TokenSchema.statics = {
     })
     if (token && token.token) {
       token.access_token = token.token
-      console.log(token, 'get')
     }
 
     return token

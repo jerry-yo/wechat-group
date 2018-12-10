@@ -13,8 +13,6 @@ exports.save = async (ctx, next) => {
       content: commentData.content
     }
     comment.replies.push(reply)
-    console.log('///////')
-    console.log(comment)
     await comment.save()
 
     ctx.body = {success: true}

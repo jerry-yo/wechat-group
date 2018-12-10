@@ -16,7 +16,8 @@ router.post('/wx-hear', Wechat.hear)
 router.get('/wx-oauth', Wechat.oauth)
 // 通过code 获取用户信息
 router.get('/userinfo', Wechat.userinfo)
-
+// 异步处理网页的签名
+router.post('/wechat/signature', Wechat.getSDKSignature)
 // index
 router.get('/', Index.homePage)
 // 电影详情页
@@ -25,6 +26,8 @@ router.get('/movie/:_id', Movie.detail)
 router.get('/results', Movie.search)
 // 评论
 router.post('/comment', User.signRequired, Comment.save)
+
+router.get('/hello', Movie.hello)
 
 // 用户的注册登录路由
 router.get('/user/signin', User.showSignin)

@@ -36,7 +36,6 @@ exports.new = async (ctx, next) => {
 // 3. 电影分类的后台列表
 
 exports.list = async (ctx, next) => {
-  console.log(ctx)
   const categories = await api.movie.findCategories()
   await ctx.render('pages/category_list', {
     title: '标签列表',

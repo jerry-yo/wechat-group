@@ -26,6 +26,12 @@ exports.show = async (ctx, next) => {
     categories
   })
 }
+exports.hello = async (ctx, next) => {
+  await ctx.render('pages/hello', {
+    title: '电影详情页面'
+  })
+}
+
 exports.detail = async (ctx, next) => {
   const _id = ctx.params._id
   const movie = await api.movie.findMovieById(_id)
@@ -35,8 +41,7 @@ exports.detail = async (ctx, next) => {
   const comments = await Comment.find({
     movie: _id
   }).populate('from', '_id nickname').populate('replies.from replies.to', '_id nickname')
-
-  console.log(JSON.stringify(comments))
+  console.log('------------------加载页面----------')
   await ctx.render('pages/detail', {
     title: '电影详情页面',
     movie,
@@ -142,7 +147,6 @@ exports.del = async (ctx, next) => {
 // 电影搜索功能
 exports.search = async (ctx, next) => {
   const {cat, q, p} = ctx.query
-  console.log(ctx.query)
   const page = parseInt(p, 10) || 0
   const count = 2
   const index = page * count

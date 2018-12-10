@@ -81,7 +81,6 @@ const createTimestamep = () => {
 }
 
 const signIt = (params) => {
-	console.log(params)
 	let keys = Object.keys(params)
 	let newArgs = {}
 	let str = ''
